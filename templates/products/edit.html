@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Mahsulot tahrirlash" %} - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Mahsulot tahrirlash" %}: {{ product.nomi }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">{% trans "Mahsulot nomi" %} *</label>
+                            {{ form.nomi }}
+                            {% if form.nomi.errors %}
+                            <div class="text-danger">{{ form.nomi.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{% trans "Kategoriya" %} *</label>
+                            {{ form.kategoriya }}
+                            {% if form.kategoriya.errors %}
+                            <div class="text-danger">{{ form.kategoriya.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{% trans "Narx (so'm)" %} *</label>
+                            {{ form.narx }}
+                            {% if form.narx.errors %}
+                            <div class="text-danger">{{ form.narx.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{% trans "Barcode" %}</label>
+                            {{ form.barcode }}
+                            {% if form.barcode.errors %}
+                            <div class="text-danger">{{ form.barcode.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{% trans "Minimal qoldiq" %} *</label>
+                            {{ form.minimal_qoldiq }}
+                            {% if form.minimal_qoldiq.errors %}
+                            <div class="text-danger">{{ form.minimal_qoldiq.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> {% trans "Joriy qoldiq" %}: <strong>{{
+                                    product.get_stock }}
+                                    {% trans "dona" %}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i>
+                                    {% trans "Saqlash" %}</button>
+                                <a href="{% url 'products_list' %}" class="btn btn-secondary"><i
+                                        class="bi bi-x-circle"></i> {% trans "Bekor qilish" %}</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

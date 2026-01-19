@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Hisobotlar" %} - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h4 class="mb-4">{% trans "Hisobotlar" %}</h4>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+    <!-- Daily Report -->
+    <div class="col">
+        <div class="card h-100 border-start border-0 border-4 border-info">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Bugungi savdo" %}</p>
+                        <h4 class="my-1 text-info">{{ daily_revenue|floatformat:0 }} {% trans "so'm" %}</h4>
+                        <p class="mb-0 font-13">{{ daily_sales_count }} {% trans "ta sotuv" %}</p>
+                    </div>
+                    <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
+                        <i class='bi bi-calendar-check'></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Report -->
+    <div class="col">
+        <div class="card h-100 border-start border-0 border-4 border-success">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Haftalik savdo" %}</p>
+                        <h4 class="my-1 text-success">{{ weekly_revenue|floatformat:0 }} {% trans "so'm" %}</h4>
+                        <p class="mb-0 font-13">{{ weekly_sales_count }} {% trans "ta sotuv" %}</p>
+                    </div>
+                    <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto">
+                        <i class='bi bi-calendar-week'></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Report -->
+    <div class="col">
+        <div class="card h-100 border-start border-0 border-4 border-warning">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Oylik savdo" %}</p>
+                        <h4 class="my-1 text-warning">{{ monthly_revenue|floatformat:0 }} {% trans "so'm" %}</h4>
+                        <p class="mb-0 font-13">{{ monthly_sales_count }} {% trans "ta sotuv" %}</p>
+                    </div>
+                    <div class="widgets-icons-2 rounded-circle bg-gradient-orange text-white ms-auto">
+                        <i class='bi bi-calendar-month'></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Low Stock Products -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Kam qolgan mahsulotlar" %}</h5>
+            </div>
+            <div class="card-body">
+                {% if low_stock_products %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Mahsulot" %}</th>
+                                <th>{% trans "Kategoriya" %}</th>
+                                <th>{% trans "Qoldiq" %}</th>
+                                <th>{% trans "Minimal qoldiq" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in low_stock_products %}
+                            <tr>
+                                <td>{{ product.nomi }}</td>
+                                <td>{{ product.kategoriya }}</td>
+                                <td><span class="text-danger fw-bold">{{ product.get_stock }}</span></td>
+                                <td>{{ product.minimal_qoldiq }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-3 mb-0">{% trans "Hamma mahsulotlar yetarli" %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kassir Stats (Admin only) -->
+{% if kassir_stats %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{% trans "Kassirlar faoliyati" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Kassir" %}</th>
+                                <th>{% trans "To'liq ism" %}</th>
+                                <th>{% trans "Sotuvlar soni" %}</th>
+                                <th>{% trans "Jami savdo" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kassir in kassir_stats %}
+                            <tr>
+                                <td>{{ kassir.username }}</td>
+                                <td>{{ kassir.fullname }}</td>
+                                <td>{{ kassir.total_sales }}</td>
+                                <td>{{ kassir.total_revenue|default:0|floatformat:0 }} {% trans "so'm" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

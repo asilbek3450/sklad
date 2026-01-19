@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sklad harakati qo'shish - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Sklad harakati qo'shish</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Mahsulot *</label>
+                            {{ form.product }}
+                            {% if form.product.errors %}
+                            <div class="text-danger">{{ form.product.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tur *</label>
+                            {{ form.transaction_type }}
+                            {% if form.transaction_type.errors %}
+                            <div class="text-danger">{{ form.transaction_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Miqdor *</label>
+                            {{ form.miqdor }}
+                            {% if form.miqdor.errors %}
+                            <div class="text-danger">{{ form.miqdor.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Izoh</label>
+                            {{ form.izoh }}
+                            {% if form.izoh.errors %}
+                            <div class="text-danger">{{ form.izoh.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i>
+                                    Saqlash</button>
+                                <a href="{% url 'inventory_list' %}" class="btn btn-secondary"><i
+                                        class="bi bi-x-circle"></i> Bekor qilish</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

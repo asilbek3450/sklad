@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Foydalanuvchini o'chirish - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-6 mx-auto">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Foydalanuvchini o'chirishni tasdiqlash</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning border-0 bg-warning alert-dismissible fade show py-2">
+                    <div class="d-flex align-items-center">
+                        <div class="font-35 text-dark"><i class='bx bx-info-circle'></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 text-dark">Diqqat!</h6>
+                            <div class="text-dark">Siz haqiqatan ham ushbu foydalanuvchini o'chirmoqchimisiz?</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <h4>{{ user.fullname }}</h4>
+                    <p class="text-muted">{{ user.username }} ({{ user.role }})</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
+                        <a href="{% url 'users_list' %}" class="btn btn-secondary">Bekor qilish</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

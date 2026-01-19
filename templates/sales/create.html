@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yangi sotuv - ShopControlBot{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-item {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .product-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .cart-item {
+        border-bottom: 1px solid #dee2e6;
+        padding: 10px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Mahsulotlar</h5>
+            </div>
+            <div class="card-body">
+                <input type="text" id="searchProduct" class="form-control mb-3" placeholder="Mahsulot qidirish...">
+                <div id="productsList" style="max-height: 500px; overflow-y: auto;">
+                    <!-- Products will be loaded here via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Savat</h5>
+            </div>
+            <div class="card-body">
+                <div id="cartItems" style="max-height: 400px; overflow-y: auto;">
+                    <p class="text-muted text-center">Savat bo'sh</p>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Jami:</h5>
+                    <h4 class="mb-0 text-primary" id="totalAmount">0 so'm</h4>
+                </div>
+                <button id="submitSale" class="btn btn-success w-100" disabled>
+                    <i class="bi bi-check-circle"></i> Sotuvni yakunlash
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const products = {{ products| safe }};
+    let cart = [];
+
+    function renderProducts(filter = '') {
+        const container = document.getElementById('productsList');
+        const filtered = products.filter(p =>
+            p.nomi.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center">Mahsulot topilmadi</p>';
+            return;
+        }
+
+        container.innerHTML = filtered.map(product => `
+      <div class="product-item p-2 mb-2 border rounded" onclick="addToCart(${product.id})">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <strong>${product.nomi}</strong>
+            <br>
+            <small class="text-muted">${product.narx.toLocaleString()} so'm | Qoldiq: ${product.stock}</small>
+          </div>
+          <button class="btn btn-sm btn-primary">
+            <i class="bi bi-plus"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+    }
+
+    function addToCart(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        const existingItem = cart.find(item => item.product_id === productId);
+        if (existingItem) {
+            if (existingItem.miqdor < product.stock) {
+                existingItem.miqdor++;
+            } else {
+                alert('Qoldiqda yetarli mahsulot yo\'q!');
+                return;
+            }
+        } else {
+            cart.push({
+                product_id: productId,
+                nomi: product.nomi,
+                narx: product.narx,
+                miqdor: 1,
+                max_stock: product.stock
+            });
+        }
+        renderCart();
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(item => item.product_id !== productId);
+        renderCart();
+    }
+
+    function updateQuantity(productId, delta) {
+        const item = cart.find(i => i.product_id === productId);
+        if (!item) return;
+
+        const newQty = item.miqdor + delta;
+        if (newQty <= 0) {
+            removeFromCart(productId);
+        } else if (newQty <= item.max_stock) {
+            item.miqdor = newQty;
+            renderCart();
+        } else {
+            alert('Qoldiqda yetarli mahsulot yo\'q!');
+        }
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        const submitBtn = document.getElementById('submitSale');
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center">Savat bo\'sh</p>';
+            submitBtn.disabled = true;
+            document.getElementById('totalAmount').textContent = '0 so\'m';
+            return;
+        }
+
+        let total = 0;
+        container.innerHTML = cart.map(item => {
+            const itemTotal = item.miqdor * item.narx;
+            total += itemTotal;
+            return `
+        <div class="cart-item">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <strong>${item.nomi}</strong>
+            <button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.product_id})">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" onclick="updateQuantity(${item.product_id}, -1)">-</button>
+              <button class="btn btn-outline-secondary" disabled>${item.miqdor}</button>
+              <button class="btn btn-outline-secondary" onclick="updateQuantity(${item.product_id}, 1)">+</button>
+            </div>
+            <span>${itemTotal.toLocaleString()} so'm</span>
+          </div>
+        </div>
+      `;
+        }).join('');
+
+        document.getElementById('totalAmount').textContent = total.toLocaleString() + ' so\'m';
+        submitBtn.disabled = false;
+    }
+
+    document.getElementById('searchProduct').addEventListener('input', (e) => {
+        renderProducts(e.target.value);
+    });
+
+    document.getElementById('submitSale').addEventListener('click', async () => {
+        if (cart.length === 0) return;
+
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        formData.append('products', JSON.stringify(cart));
+
+        try {
+            const response = await fetch('{% url "sale_create" %}', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                window.location.href = data.redirect_url || '{% url "sales_list" %}';
+            } else {
+                alert('Xatolik yuz berdi!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Xatolik yuz berdi!');
+        }
+    });
+
+    // Initial render
+    renderProducts();
+</script>
+{% endblock %}

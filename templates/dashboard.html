@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %} - ShopControlBot{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        transition: transform 0.2s;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h4 class="mb-0">{% trans "Dashboard" %}</h4>
+        <p class="mb-4">{% trans "Umumiy statistika va ma'lumotlar" %}</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+    <div class="col">
+        <div class="card radius-10 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Jami mahsulotlar" %}</p>
+                        <h4 class="my-1">{{ total_products }}</h4>
+                    </div>
+                    <div class="widgets-icons bg-light-primary text-primary ms-auto"><i class="bi bi-box-seam"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card radius-10 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Kam qolgan" %}</p>
+                        <h4 class="my-1 text-warning">{{ low_stock_count }}</h4>
+                    </div>
+                    <div class="widgets-icons bg-light-warning text-warning ms-auto"><i
+                            class="bi bi-exclamation-triangle"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card radius-10 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Bugungi sotuvlar" %}</p>
+                        <h4 class="my-1">{{ today_sales_count }}</h4>
+                    </div>
+                    <div class="widgets-icons bg-light-success text-success ms-auto"><i class="bi bi-cart-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card radius-10 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Bugungi daromad" %}</p>
+                        <h4 class="my-1 text-success">{{ today_revenue|floatformat:0 }} {% trans "so'm" %}</h4>
+                    </div>
+                    <div class="widgets-icons bg-light-info text-info ms-auto"><i class="bi bi-currency-dollar"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Sales Chart -->
+    <div class="col-12 col-lg-8">
+        <div class="card radius-10">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h5 class="mb-0">{% trans "Oxirgi 7 kunlik sotuvlar" %}</h5>
+                    </div>
+                </div>
+                <div class="chart-container mt-4">
+                    <canvas id="salesChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Products -->
+    <div class="col-12 col-lg-4">
+        <div class="card radius-10">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div>
+                        <h5 class="mb-0">{% trans "Kam qolgan mahsulotlar" %}</h5>
+                    </div>
+                </div>
+                <div class="product-list">
+                    {% if low_stock_products %}
+                    {% for item in low_stock_products %}
+                    <div class="d-flex align-items-center border-bottom pb-2 mb-2">
+                        <div class="flex-grow-1">
+                            <p class="mb-0">{{ item.nomi }}</p>
+                            <small class="text-muted">{{ item.kategoriya }}</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning">{{ item.get_stock }} {% trans "dona" %}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted">{% trans "Kam qolgan mahsulotlar yo'q" %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Products -->
+<div class="row">
+    <div class="col-12">
+        <div class="card radius-10">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div>
+                        <h5 class="mb-0">{% trans "Eng ko'p sotiladigan mahsulotlar" %}</h5>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{% trans "Mahsulot" %}</th>
+                                <th>{% trans "Sotilgan miqdor" %}</th>
+                                <th>{% trans "Summa" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in top_products %}
+                            <tr>
+                                <td>{{ product.display_name }}</td>
+                                <td>{{ product.total_qty }} {% trans "dona" %}</td>
+                                <td>{{ product.total_amount|floatformat:0 }} {% trans "so'm" %}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">{% trans "Ma'lumot yo'q" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Sales Chart
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const currencyStr = gettext("so'm");
+    const salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ last_7_days| safe }},
+    datasets: [{
+        label: '{% trans "Sotuvlar" %} (' + currencyStr + ')',
+        data: {{ sales_data| safe }},
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+        responsive: true,
+            maintainAspectRatio: false,
+                plugins: {
+            legend: {
+                display: true,
+                    position: 'top'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                    ticks: {
+                    callback: function(value) {
+                        return value.toLocaleString() + ' ' + currencyStr;
+                    }
+                }
+            }
+        }
+    }
+  });
+</script>
+{% endblock %}

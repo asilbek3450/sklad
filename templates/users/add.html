@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yangi foydalanuvchi - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Yangi foydalanuvchi qo'shish</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Foydalanuvchi nomi</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="text-danger small">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Parol</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                            <div class="text-danger small">{{ form.password.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Parol kiritish majburiy emas (keyinchalik o'zgartirish mumkin)</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">To'liq ism</label>
+                            {{ form.fullname }}
+                            {% if form.fullname.errors %}
+                            <div class="text-danger small">{{ form.fullname.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Rol</label>
+                            {{ form.role }}
+                            {% if form.role.errors %}
+                            <div class="text-danger small">{{ form.role.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Telegram ID</label>
+                            {{ form.telegram_id }}
+                            {% if form.telegram_id.errors %}
+                            <div class="text-danger small">{{ form.telegram_id.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label">
+                                    Aktiv hisob
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'users_list' %}" class="btn btn-secondary">Bekor qilish</a>
+                                <button type="submit" class="btn btn-primary">Saqlash</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Yangi sotuv" %} - ShopControlBot{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-item {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .product-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .cart-item {
+        border-bottom: 1px solid #dee2e6;
+        padding: 10px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+</div>
+{% endblock %}

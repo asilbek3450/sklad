@@ -1,0 +1,525 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-19 18:29+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: config/settings.py:114
+msgid "O‘zbekcha"
+msgstr "Uzbek"
+
+#: config/settings.py:115
+msgid "Русский"
+msgstr "Russian"
+
+#: config/settings.py:116
+msgid "English"
+msgstr "English"
+
+#: shop/models.py:10
+msgid "Admin"
+msgstr "Admin"
+
+#: shop/models.py:11 shop/models.py:115 templates/reports/index.html:122
+msgid "Kassir"
+msgstr "Cashier"
+
+#: shop/models.py:14
+msgid "Telegram ID"
+msgstr "Telegram ID"
+
+#: shop/models.py:15
+msgid "Rol"
+msgstr "Role"
+
+#: shop/models.py:16 templates/reports/index.html:123
+msgid "To'liq ism"
+msgstr "Full Name"
+
+#: shop/models.py:17 shop/models.py:47
+msgid "Yaratilgan sana"
+msgstr "Created Date"
+
+#: shop/models.py:20 shop/models.py:97 templates/inventory/list.html:73
+msgid "Foydalanuvchi"
+msgstr "User"
+
+#: shop/models.py:21 templates/base.html:211
+msgid "Foydalanuvchilar"
+msgstr "Users"
+
+#: shop/models.py:30
+msgid "Kategoriya nomi"
+msgstr "Category Name"
+
+#: shop/models.py:33 shop/models.py:43 templates/products/add.html:26
+#: templates/products/delete.html:23 templates/products/edit.html:26
+#: templates/products/list.html:66 templates/reports/index.html:84
+msgid "Kategoriya"
+msgstr "Category"
+
+#: shop/models.py:34
+msgid "Kategoriyalar"
+msgstr "Categories"
+
+#: shop/models.py:42 templates/products/list.html:65
+msgid "Nomi"
+msgstr "Name"
+
+#: shop/models.py:44 shop/models.py:139 templates/products/delete.html:24
+#: templates/products/list.html:67
+msgid "Narx"
+msgstr "Price"
+
+#: shop/models.py:45 templates/products/add.html:40
+#: templates/products/delete.html:26 templates/products/edit.html:40
+#: templates/products/list.html:68
+msgid "Barcode"
+msgstr "Barcode"
+
+#: shop/models.py:46 templates/products/add.html:47
+#: templates/products/edit.html:47 templates/reports/index.html:86
+msgid "Minimal qoldiq"
+msgstr "Minimal Stock"
+
+#: shop/models.py:48
+msgid "O'zgartirilgan sana"
+msgstr "Modified Date"
+
+#: shop/models.py:51 shop/models.py:92 shop/models.py:137
+#: templates/dashboard.html:149 templates/inventory/list.html:70
+#: templates/inventory/list.html:130 templates/reports/index.html:83
+msgid "Mahsulot"
+msgstr "Product"
+
+#: shop/models.py:52 templates/base.html:59 templates/base.html:161
+#: templates/products/list.html:5
+msgid "Mahsulotlar"
+msgstr "Products"
+
+#: shop/models.py:88 templates/inventory/list.html:34
+msgid "Kirim"
+msgstr "Income"
+
+#: shop/models.py:89
+msgid "Chiqim"
+msgstr "Outcome"
+
+#: shop/models.py:93 templates/inventory/list.html:71
+#: templates/inventory/list.html:137
+msgid "Tur"
+msgstr "Type"
+
+#: shop/models.py:94 shop/models.py:138 templates/inventory/list.html:72
+#: templates/inventory/list.html:144
+msgid "Miqdor"
+msgstr "Amount"
+
+#: shop/models.py:95 shop/models.py:116 templates/inventory/list.html:69
+msgid "Sana"
+msgstr "Date"
+
+#: shop/models.py:96 templates/inventory/list.html:74
+#: templates/inventory/list.html:151
+msgid "Izoh"
+msgstr "Comment"
+
+#: shop/models.py:100
+msgid "Sklad harakati"
+msgstr "Inventory Transaction"
+
+#: shop/models.py:101 templates/inventory/list.html:5
+#: templates/inventory/list.html:12
+msgid "Sklad harakatlari"
+msgstr "Inventory Transactions"
+
+#: shop/models.py:111
+msgid "Faol"
+msgstr "Active"
+
+#: shop/models.py:112
+msgid "Bekor qilingan"
+msgstr "Cancelled"
+
+#: shop/models.py:117
+msgid "Jami summa"
+msgstr "Total Amount"
+
+#: shop/models.py:118 templates/products/list.html:70
+msgid "Status"
+msgstr "Status"
+
+#: shop/models.py:121 shop/models.py:136
+msgid "Sotuv"
+msgstr "Sale"
+
+#: shop/models.py:122 templates/base.html:62 templates/base.html:190
+#: templates/dashboard.html:186
+msgid "Sotuvlar"
+msgstr "Sales"
+
+#: shop/models.py:126 templates/dashboard.html:77 templates/dashboard.html:159
+#: templates/products/list.html:82 templates/reports/index.html:22
+#: templates/reports/index.html:40 templates/reports/index.html:58
+#: templates/reports/index.html:134
+msgid "so'm"
+msgstr "sum"
+
+#: shop/models.py:140
+msgid "Jami"
+msgstr "Total"
+
+#: shop/models.py:143
+msgid "Sotuv detali"
+msgstr "Sale Detail"
+
+#: shop/models.py:144
+msgid "Sotuv detallari"
+msgstr "Sale Details"
+
+#: shop/views.py:37
+#, python-brace-format
+msgid "Xush kelibsiz, {}!"
+msgstr "Welcome, {}!"
+
+#: shop/views.py:40
+msgid "Foydalanuvchi nomi yoki parol noto'g'ri!"
+msgstr "Invalid username or password!"
+
+#: shop/views.py:51
+msgid "Tizimdan muvaffaqiyatli chiqdingiz!"
+msgstr "Logged out successfully!"
+
+#: shop/views.py:214
+#, python-brace-format
+msgid "Mahsulot '{}' muvaffaqiyatli qo'shildi!"
+msgstr "Product '{}' added successfully!"
+
+#: shop/views.py:233
+#, python-brace-format
+msgid "Mahsulot '{}' muvaffaqiyatli tahrirlandi!"
+msgstr "Product '{}' edited successfully!"
+
+#: shop/views.py:251
+#, python-brace-format
+msgid "Mahsulot '{}' muvaffaqiyatli o'chirildi!"
+msgstr "Product '{}' deleted successfully!"
+
+#: shop/views.py:294
+msgid "Sklad harakati muvaffaqiyatli qo'shildi!"
+msgstr "Inventory transaction added successfully!"
+
+#: shop/views.py:339
+msgid "Sizda bu sotuvni ko'rish huquqi yo'q!"
+msgstr "You don't have permission to view this sale!"
+
+#: shop/views.py:377
+#, python-brace-format
+msgid "Mahsulot '{}' yetarli emas! Qoldiq: {}"
+msgstr "Insufficient stock for product '{}'! Stock: {}"
+
+#: shop/views.py:392
+#, python-brace-format
+msgid "Sotuv #{} muvaffaqiyatli yaratildi!"
+msgstr "Sale #{} created successfully!"
+
+#: shop/views.py:434
+#, python-brace-format
+msgid "Sotuv #{} bekor qilindi!"
+msgstr "Sale #{} cancelled!"
+
+#: shop/views.py:505
+#, python-brace-format
+msgid "Foydalanuvchi '{}' muvaffaqiyatli qo'shildi!"
+msgstr "User '{}' added successfully!"
+
+#: shop/views.py:523
+#, python-brace-format
+msgid "Foydalanuvchi '{}' muvaffaqiyatli tahrirlandi!"
+msgstr "User '{}' edited successfully!"
+
+#: shop/views.py:538
+msgid "O'zingizni o'chira olmaysiz!"
+msgstr "You cannot delete yourself!"
+
+#: shop/views.py:544
+#, python-brace-format
+msgid "Foydalanuvchi '{}' muvaffaqiyatli o'chirildi!"
+msgstr "User '{}' deleted successfully!"
+
+#: templates/base.html:56 templates/base.html:154 templates/dashboard.html:5
+#: templates/dashboard.html:22
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:126
+msgid "Chiqish"
+msgstr "Logout"
+
+#: templates/base.html:164 templates/base.html:193 templates/base.html:214
+msgid "Ro'yxat"
+msgstr "List"
+
+#: templates/base.html:167 templates/base.html:215
+msgid "Qo'shish"
+msgstr "Add"
+
+#: templates/base.html:175
+msgid "Sklad"
+msgstr "Inventory"
+
+#: templates/base.html:178
+msgid "Harakatlar"
+msgstr "Transactions"
+
+#: templates/base.html:194 templates/sales/list.html:5
+msgid "Yangi sotuv"
+msgstr "New Sale"
+
+#: templates/base.html:202 templates/reports/index.html:5
+#: templates/reports/index.html:10
+msgid "Hisobotlar"
+msgstr "Reports"
+
+#: templates/base.html:207
+msgid "Boshqaruv"
+msgstr "Management"
+
+#: templates/dashboard.html:23
+msgid "Umumiy statistika va ma'lumotlar"
+msgstr "General Statistics and Data"
+
+#: templates/dashboard.html:34
+msgid "Jami mahsulotlar"
+msgstr "Total Products"
+
+#: templates/dashboard.html:48 templates/products/list.html:87
+msgid "Kam qolgan"
+msgstr "Low Stock"
+
+#: templates/dashboard.html:62
+msgid "Bugungi sotuvlar"
+msgstr "Today's Sales"
+
+#: templates/dashboard.html:76
+msgid "Bugungi daromad"
+msgstr "Today's Revenue"
+
+#: templates/dashboard.html:94
+msgid "Oxirgi 7 kunlik sotuvlar"
+msgstr "Last 7 Days Sales"
+
+#: templates/dashboard.html:110 templates/reports/index.html:75
+msgid "Kam qolgan mahsulotlar"
+msgstr "Low Stock Products"
+
+#: templates/dashboard.html:122 templates/dashboard.html:158
+#: templates/inventory/list.html:92 templates/products/edit.html:57
+#: templates/products/list.html:84
+msgid "dona"
+msgstr "pcs"
+
+#: templates/dashboard.html:127
+msgid "Kam qolgan mahsulotlar yo'q"
+msgstr "No low stock products"
+
+#: templates/dashboard.html:142
+msgid "Eng ko'p sotiladigan mahsulotlar"
+msgstr "Top Selling Products"
+
+#: templates/dashboard.html:150
+msgid "Sotilgan miqdor"
+msgstr "Amount Sold"
+
+#: templates/dashboard.html:151
+msgid "Summa"
+msgstr "Amount"
+
+#: templates/dashboard.html:163
+msgid "Ma'lumot yo'q"
+msgstr "No data available"
+
+#: templates/inventory/list.html:13
+msgid "Kirim va chiqim tarixi"
+msgstr "Income and outcome history"
+
+#: templates/inventory/list.html:33
+msgid "Barcha turlar"
+msgstr "All types"
+
+#: templates/inventory/list.html:42
+msgid "Barcha mahsulotlar"
+msgstr "All products"
+
+#: templates/inventory/list.html:51
+msgid "Filtrlash"
+msgstr "Filter"
+
+#: templates/inventory/list.html:99
+msgid "Harakatlar topilmadi"
+msgstr "Transactions not found"
+
+#: templates/inventory/list.html:116 templates/inventory/list.html:123
+msgid "Sklad harakati qo'shish"
+msgstr "Add inventory transaction"
+
+#: templates/inventory/list.html:160 templates/products/add.html:56
+#: templates/products/edit.html:63
+msgid "Saqlash"
+msgstr "Save"
+
+#: templates/inventory/list.html:162 templates/products/add.html:58
+#: templates/products/edit.html:65
+msgid "Bekor qilish"
+msgstr "Cancel"
+
+#: templates/login.html:10
+msgid "Kirish"
+msgstr "Login"
+
+#: templates/login.html:40
+msgid "Tizimga kirish uchun ma'lumotlaringizni kiriting"
+msgstr "Enter your credentials to login"
+
+#: templates/login.html:62
+msgid " Foydalanuvchi nomi"
+msgstr " Username"
+
+#: templates/products/add.html:5
+msgid "Mahsulot qo'shish"
+msgstr "Add Product"
+
+#: templates/products/add.html:12
+msgid "Yangi mahsulot qo'shish"
+msgstr "Add New Product"
+
+#: templates/products/add.html:19 templates/products/edit.html:19
+msgid "Mahsulot nomi"
+msgstr "Product Name"
+
+#: templates/products/add.html:33 templates/products/edit.html:33
+msgid "Narx (so'm)"
+msgstr "Price (sum)"
+
+#: templates/products/delete.html:5 templates/products/delete.html:12
+#, fuzzy
+#| msgid "Mahsulot qo'shish"
+msgid "Mahsulot o'chirish"
+msgstr "Add Product"
+
+#: templates/products/delete.html:19
+msgid "Quyidagi mahsulotni o'chirmoqchimisiz?"
+msgstr "Are you sure you want to delete this product?"
+
+#: templates/products/delete.html:27 templates/products/edit.html:55
+msgid "Joriy qoldiq"
+msgstr "Current stock"
+
+#: templates/products/delete.html:37
+msgid "Yo'q, bekor qilish"
+msgstr "No, cancel"
+
+#: templates/products/edit.html:5 templates/products/edit.html:12
+#, fuzzy
+#| msgid "Mahsulot qo'shish"
+msgid "Mahsulot tahrirlash"
+msgstr "Add Product"
+
+#: templates/products/list.html:12
+msgid "Mahsulotlar ro'yxati"
+msgstr "Products List"
+
+#: templates/products/list.html:13
+msgid "Barcha mahsulotlar va ularning qoldiqlari"
+msgstr "All products and their stocks"
+
+#: templates/products/list.html:17
+#, fuzzy
+#| msgid "Yangi mahsulot qo'shish"
+msgid "Yangi mahsulot"
+msgstr "Add New Product"
+
+#: templates/products/list.html:32
+msgid "Mahsulot nomi, barcode yoki kategoriya bo\\"
+msgstr ""
+
+#: templates/products/list.html:37
+msgid "Barcha kategoriyalar"
+msgstr "All Categories"
+
+#: templates/products/list.html:47
+msgid "Qidirish"
+msgstr "Search"
+
+#: templates/products/list.html:69 templates/reports/index.html:85
+msgid "Qoldiq"
+msgstr "Stock"
+
+#: templates/products/list.html:72
+msgid "Amallar"
+msgstr "Actions"
+
+#: templates/products/list.html:89
+msgid "Yetarli"
+msgstr ""
+
+#: templates/products/list.html:107
+msgid "Mahsulotlar topilmadi"
+msgstr "No products found"
+
+#: templates/reports/index.html:21
+#, fuzzy
+#| msgid "Bugungi daromad"
+msgid "Bugungi savdo"
+msgstr "Today's Revenue"
+
+#: templates/reports/index.html:23 templates/reports/index.html:41
+#: templates/reports/index.html:59
+#, fuzzy
+#| msgid "Yangi sotuv"
+msgid "ta sotuv"
+msgstr "New Sale"
+
+#: templates/reports/index.html:39
+msgid "Haftalik savdo"
+msgstr ""
+
+#: templates/reports/index.html:57
+msgid "Oylik savdo"
+msgstr ""
+
+#: templates/reports/index.html:102
+#, fuzzy
+#| msgid "Jami mahsulotlar"
+msgid "Hamma mahsulotlar yetarli"
+msgstr "Total Products"
+
+#: templates/reports/index.html:115
+msgid "Kassirlar faoliyati"
+msgstr ""
+
+#: templates/reports/index.html:124
+#, fuzzy
+#| msgid "Sotuvlar"
+msgid "Sotuvlar soni"
+msgstr "Sales"
+
+#: templates/reports/index.html:125
+#, fuzzy
+#| msgid "Jami summa"
+msgid "Jami savdo"
+msgstr "Total Amount"
