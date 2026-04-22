@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Sotuv detali" %} - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12 d-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="mb-0">{% trans "Sotuv" %} #{{ sale.id }}</h4>
+            <p class="mb-0 text-muted">{{ sale.sana|date:"d.m.Y H:i" }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            {% if sale.status == 'active' and can_cancel %}
+            <a href="{% url 'sale_cancel' sale.id %}" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> {% trans "Bekor qilish" %}</a>
+            {% endif %}
+            <a href="{% url 'sales_list' %}" class="btn btn-secondary">{% trans "Orqaga" %}</a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="card h-100 border-start border-0 border-4 border-primary">
+            <div class="card-body">
+                <p class="mb-1 text-secondary">{% trans "Kassir" %}</p>
+                <h6 class="mb-0">{{ sale.kassir.fullname|default:sale.kassir.username }}</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-start border-0 border-4 border-success">
+            <div class="card-body">
+                <p class="mb-1 text-secondary">{% trans "Jami summa" %}</p>
+                <h5 class="mb-0 text-success">{{ sale.jami_summa|floatformat:0 }} {% trans "so'm" %}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-start border-0 border-4 {% if sale.status == 'active' %}border-info{% else %}border-secondary{% endif %}">
+            <div class="card-body">
+                <p class="mb-1 text-secondary">{% trans "Status" %}</p>
+                {% if sale.status == 'active' %}
+                <span class="badge bg-success">{% trans "Faol" %}</span>
+                {% else %}
+                <span class="badge bg-secondary">{% trans "Bekor qilingan" %}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-start border-0 border-4 border-warning">
+            <div class="card-body">
+                <p class="mb-1 text-secondary">{% trans "Mahsulotlar soni" %}</p>
+                <h5 class="mb-0 text-warning">{{ total_qty }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Items -->
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+            <h5 class="mb-0">{% trans "Mahsulotlar" %}</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "Mahsulot" %}</th>
+                        <th>{% trans "Miqdor" %}</th>
+                        <th>{% trans "Narx" %}</th>
+                        <th class="text-end">{% trans "Jami" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.product.nomi }}</td>
+                        <td>{{ item.miqdor }} {% trans "dona" %}</td>
+                        <td>{{ item.narx|floatformat:0 }} {% trans "so'm" %}</td>
+                        <td class="text-end"><strong>{{ item.jami|floatformat:0 }} {% trans "so'm" %}</strong></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">{% trans "Mahsulotlar topilmadi" %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

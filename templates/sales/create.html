@@ -22,6 +22,15 @@
 {% endblock %}
 
 {% block content %}
+<div class="row mb-3">
+    <div class="col-12 d-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="mb-0">{% trans "Yangi sotuv" %}</h4>
+            <p class="mb-0 text-muted">{% trans "Mahsulotlarni tanlang va sotuvni tez yakunlang" %}</p>
+        </div>
+        <a href="{% url 'sales_list' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> {% trans "Sotuvlar" %}</a>
+    </div>
+</div>
 <div class="row">
     <div class="col-12 col-lg-8">
         <div class="card">
@@ -191,12 +200,11 @@
                 method: 'POST',
                 body: formData
             });
-
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
                 window.location.href = data.redirect_url || '{% url "sales_list" %}';
             } else {
-                alert('Xatolik yuz berdi!');
+                alert(data.error || 'Xatolik yuz berdi!');
             }
         } catch (error) {
             console.error('Error:', error);

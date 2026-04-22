@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import gettext_lazy as _
 from .models import Product, InventoryTransaction, Sales, SaleItems, CustomUser
 
 
@@ -51,15 +52,17 @@ class InventoryTransactionForm(forms.ModelForm):
         product = cleaned_data.get('product')
         transaction_type = cleaned_data.get('transaction_type')
         miqdor = cleaned_data.get('miqdor')
-        
+
+        if miqdor is not None and miqdor <= 0:
+            raise forms.ValidationError(_("Miqdor musbat bo'lishi kerak!"))
+
         if transaction_type == 'chiqim' and product and miqdor:
-            if miqdor <= 0:
-                 raise forms.ValidationError("Miqdor musbat bo'lishi kerak!")
-                 
             current_stock = product.get_stock()
             if current_stock < miqdor:
-                raise forms.ValidationError(f"Skladda yetarli mahsulot yo'q! Joriy qoldiq: {current_stock} dona.")
-        
+                raise forms.ValidationError(
+                    _("Skladda yetarli mahsulot yo'q! Joriy qoldiq: %(stock)s dona.") % {"stock": current_stock}
+                )
+
         return cleaned_data
 
 

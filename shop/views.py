@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Sum, Count, Q, F
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -22,6 +23,11 @@ def is_admin(user):
 def is_superuser(user):
     """Superuser ekanligini tekshirish"""
     return user.is_authenticated and user.is_superuser
+
+
+def is_admin_or_superuser(user):
+    """Admin yoki superuser ekanligini tekshirish"""
+    return user.is_authenticated and (user.role == 'admin' or user.is_superuser)
 
 
 def login_view(request):
@@ -52,7 +58,6 @@ def logout_view(request):
     return redirect('login')
 
 
-@login_required
 @login_required
 def dashboard(request):
     """Dashboard sahifasi"""
@@ -145,7 +150,6 @@ def dashboard(request):
 
 
 @login_required
-@login_required
 def products_list(request):
     """Mahsulotlar ro'yxati"""
     
@@ -203,8 +207,7 @@ def products_list(request):
 
 
 @login_required
-@user_passes_test(is_admin)
-@user_passes_test(is_superuser)
+@user_passes_test(is_admin_or_superuser)
 def product_add(request):
     """Mahsulot qo'shish"""
     if request.method == 'POST':
@@ -220,8 +223,7 @@ def product_add(request):
 
 
 @login_required
-@user_passes_test(is_admin)
-@user_passes_test(is_superuser)
+@user_passes_test(is_admin_or_superuser)
 def product_edit(request, pk):
     """Mahsulot tahrirlash"""
     product = get_object_or_404(Product, pk=pk)
@@ -239,8 +241,7 @@ def product_edit(request, pk):
 
 
 @login_required
-@user_passes_test(is_admin)
-@user_passes_test(is_superuser)
+@user_passes_test(is_admin_or_superuser)
 def product_delete(request, pk):
     """Mahsulot o'chirish"""
     product = get_object_or_404(Product, pk=pk)
@@ -281,8 +282,7 @@ def inventory_list(request):
 
 
 @login_required
-@user_passes_test(is_admin)
-@user_passes_test(is_superuser)
+@user_passes_test(is_admin_or_superuser)
 def inventory_add(request):
     """Sklad harakati qo'shish"""
     if request.method == 'POST':
@@ -302,7 +302,7 @@ def inventory_add(request):
 @login_required
 def sales_list(request):
     """Sotuvlar ro'yxati"""
-    sales = Sales.objects.all()
+    sales = Sales.objects.select_related('kassir').order_by('-sana')
     
     # Kassir faqat o'z sotuvlarini ko'radi
     if request.user.role == 'kassir':
@@ -310,20 +310,35 @@ def sales_list(request):
     
     # Filtrlash
     status = request.GET.get('status', '')
-    if status:
+    if status in ['active', 'cancelled']:
         sales = sales.filter(status=status)
     
     kassir_id = request.GET.get('kassir', '')
-    if kassir_id and request.user.role == 'admin':
+    if kassir_id and request.user.role != 'kassir':
         sales = sales.filter(kassir_id=kassir_id)
     
+    date_from = request.GET.get('from', '')
+    date_to = request.GET.get('to', '')
+    if date_from:
+        sales = sales.filter(sana__date__gte=date_from)
+    if date_to:
+        sales = sales.filter(sana__date__lte=date_to)
+
+    sales = sales.annotate(items_count=Count('saleitems'))
     kassirs = CustomUser.objects.filter(role='kassir')
+    stats = {
+        'total_active': sales.filter(status='active').aggregate(total=Coalesce(Sum('jami_summa'), 0))['total'] or 0,
+        'count_active': sales.filter(status='active').count(),
+    }
     
     context = {
         'sales': sales,
         'kassirs': kassirs,
         'selected_status': status,
         'selected_kassir': kassir_id,
+        'date_from': date_from,
+        'date_to': date_to,
+        'stats': stats,
     }
     
     return render(request, 'sales/list.html', context)
@@ -339,11 +354,14 @@ def sale_detail(request, pk):
         messages.error(request, _("Sizda bu sotuvni ko'rish huquqi yo'q!"))
         return redirect('sales_list')
     
-    items = sale.saleitems_set.all()
-    
+    items = sale.saleitems_set.select_related('product')
+    total_qty = items.aggregate(total=Sum('miqdor'))['total'] or 0
+
     context = {
         'sale': sale,
         'items': items,
+        'total_qty': total_qty,
+        'can_cancel': is_admin_or_superuser(request.user) or sale.kassir == request.user,
     }
     
     return render(request, 'sales/detail.html', context)
@@ -353,41 +371,47 @@ def sale_detail(request, pk):
 def sale_create(request):
     """Yangi sotuv yaratish"""
     if request.method == 'POST':
-        # Sotuv yaratish
-        sale = Sales.objects.create(
-            kassir=request.user,
-            jami_summa=0
-        )
-        
         try:
-            # Mahsulotlarni qo'shish
             products_data = json.loads(request.POST.get('products', '[]'))
-            total = Decimal('0')
-            
-            for item_data in products_data:
-                product = Product.objects.get(id=item_data['product_id'])
-                miqdor = int(item_data['miqdor'])
-                narx = Decimal(str(item_data['narx']))
+        except json.JSONDecodeError:
+            return JsonResponse({'error': _("Mahsulotlar ro'yxatini o'qib bo'lmadi!")}, status=400)
+
+        if not products_data:
+            return JsonResponse({'error': _("Hech qanday mahsulot tanlanmadi")}, status=400)
+
+        try:
+            with transaction.atomic():
+                sale = Sales.objects.create(kassir=request.user, jami_summa=0)
+                total = Decimal('0')
                 
-                # Qoldiqni tekshirish
-                current_stock = product.get_stock()
-                if current_stock < miqdor:
-                    sale.delete()
-                    return JsonResponse({
-                        'error': _("Mahsulot '{}' yetarli emas! Qoldiq: {}").format(product.nomi, current_stock)
-                    }, status=400)
+                for item_data in products_data:
+                    product_id = item_data.get('product_id')
+                    miqdor = int(item_data.get('miqdor', 0))
+                    narx = Decimal(str(item_data.get('narx', 0)))
+                    
+                    if miqdor <= 0:
+                        raise ValueError(_("Miqdor noto'g'ri"))
+                    
+                    product = Product.objects.get(id=product_id)
+                    
+                    # Qoldiqni tekshirish
+                    current_stock = product.get_stock()
+                    if current_stock < miqdor:
+                        raise ValueError(_(
+                            "Mahsulot '%(name)s' yetarli emas! Qoldiq: %(stock)s"
+                        ) % {'name': product.nomi, 'stock': current_stock})
+                    
+                    SaleItems.objects.create(
+                        sale=sale,
+                        product=product,
+                        miqdor=miqdor,
+                        narx=narx or product.narx
+                    )
+                    total += Decimal(miqdor) * (narx or product.narx)
                 
-                SaleItems.objects.create(
-                    sale=sale,
-                    product=product,
-                    miqdor=miqdor,
-                    narx=narx
-                )
-                total += Decimal(miqdor) * narx
-            
-            # Jami summani yangilash
-            sale.jami_summa = total
-            sale.save()
+                # Jami summani yangilash
+                sale.jami_summa = total
+                sale.save(update_fields=['jami_summa'])
             
             messages.success(request, _("Sotuv #{} muvaffaqiyatli yaratildi!").format(sale.id))
             return JsonResponse({
@@ -395,7 +419,6 @@ def sale_create(request):
             })
             
         except Exception as e:
-            sale.delete()
             return JsonResponse({'error': str(e)}, status=400)
     
     products = Product.objects.annotate(
@@ -412,7 +435,7 @@ def sale_create(request):
         products_with_stock.append({
             'id': product.id,
             'nomi': product.nomi,
-            'narx': int(product.narx), # JSON serializable
+            'narx': float(product.narx), # JSON serializable
             'barcode': product.barcode,
             'stock': product.calculated_stock
         })
@@ -422,17 +445,23 @@ def sale_create(request):
 
 
 @login_required
-@user_passes_test(is_admin)
-@user_passes_test(is_superuser)
 def sale_cancel(request, pk):
     """Sotuvni bekor qilish"""
     sale = get_object_or_404(Sales, pk=pk)
     
+    if not (is_admin_or_superuser(request.user) or sale.kassir == request.user):
+        messages.error(request, _("Sizda bu sotuvni bekor qilish huquqi yo'q!"))
+        return redirect('sale_detail', pk=sale.id)
+    
+    if sale.status == 'cancelled':
+        messages.info(request, _("Sotuv allaqachon bekor qilingan."))
+        return redirect('sale_detail', pk=sale.id)
+    
     if request.method == 'POST':
         sale.status = 'cancelled'
-        sale.save()
+        sale.save(update_fields=['status'])
         messages.success(request, _("Sotuv #{} bekor qilindi!").format(sale.id))
-        return redirect('sales_list')
+        return redirect('sale_detail', pk=sale.id)
     
     return render(request, 'sales/cancel.html', {'sale': sale})
 
@@ -459,9 +488,9 @@ def reports(request):
     products = Product.objects.all()
     low_stock_products = [p for p in products if p.is_low_stock()]
     
-    # Kassirlar bo'yicha hisobot (faqat admin)
+    # Kassirlar bo'yicha hisobot (admin va superuser)
     kassir_stats = None
-    if request.user.role == 'admin':
+    if is_admin_or_superuser(request.user):
         kassir_stats = CustomUser.objects.filter(role='kassir').annotate(
             total_sales=Count('sales', filter=Q(sales__status='active')),
             total_revenue=Sum('sales__jami_summa', filter=Q(sales__status='active'))

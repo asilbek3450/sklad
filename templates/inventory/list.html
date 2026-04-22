@@ -30,16 +30,16 @@
                     <div class="col-md-4">
                         <select class="form-select" name="type">
                             <option value="">{% trans "Barcha turlar" %}</option>
-                            <option value="kirim">{% trans "Kirim" %}
+                            <option value="kirim" {% if selected_type == 'kirim' %}selected{% endif %}>{% trans "Kirim" %}
                             </option>
-                            <option value="chiqim">{% trans "Chiqim" %}</option>
+                            <option value="chiqim" {% if selected_type == 'chiqim' %}selected{% endif %}>{% trans "Chiqim" %}</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <select class="form-select" name="product">
                             <option value="">{% trans "Barcha mahsulotlar" %}</option>
                             {% for product in products %}
-                            <option value="{{ product.id }}">{{ product.nomi }}</option>
+                            <option value="{{ product.id }}" {% if selected_product|add:'' == product.id|add:'' %}selected{% endif %}>{{ product.nomi }}</option>
                             {% endfor %}
                         </select>
                     </div>

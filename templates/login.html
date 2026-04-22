@@ -56,32 +56,27 @@
                                         <form class="row g-3" method="post">
                                             {% csrf_token %}
                                             <div class="col-12">
-                                                <label for="inputUsername" class="form-label">{% trans "Foydalanuvchi
-                                                    nomi" %}</label>
+                                                <label for="inputUsername" class="form-label">{% trans "Foydalanuvchi nomi" %}</label>
                                                 <input type="text" class="form-control" id="inputUsername"
                                                     name="username" placeholder="{% trans " Foydalanuvchi nomi" %}"
                                                     required autofocus>
                                             </div>
                                             <div class="col-12">
-                                                <label for="inputPassword" class="form-label">{% trans "Parol"
-                                                    %}</label>
+                                                <label for="inputPassword" class="form-label">{% trans "Parol" %}</label>
                                                 <div class="input-group" id="show_hide_password">
                                                     <input type="password" class="form-control border-end-0"
-                                                        id="inputPassword" name="password" placeholder="{% trans "
-                                                        Parol" %}" required>
+                                                        id="inputPassword" name="password" placeholder="{% trans "Parol" %}" required>
                                                     <a href="javascript:;" class="input-group-text bg-transparent"><i
                                                             class='bi bi-eye-slash-fill'></i></a>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="d-grid">
-                                                    <button type="submit" class="btn btn-primary">{% trans "Kirish"
-                                                        %}</button>
+                                                    <button type="submit" class="btn btn-primary">{% trans "Kirish" %}</button>
                                                 </div>
                                             </div>
                                             <div class="col-12 text-center">
-                                                <p class="mb-0 text-muted">{% trans "Faqat ro'yxatdan o'tgan
-                                                    foydalanuvchilar kirishi mumkin" %}</p>
+                                                <p class="mb-0 text-muted">{% trans "Faqat ro'yxatdan o'tgan foydalanuvchilar kirishi mumkin" %}</p>
                                             </div>
                                         </form>
                                     </div>

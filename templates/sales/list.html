@@ -2,27 +2,161 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "Yangi sotuv" %} - ShopControlBot{% endblock %}
+{% block title %}{% trans "Sotuvlar" %} - ShopControlBot{% endblock %}
 
 {% block extra_css %}
 <style>
-    .product-item {
-        cursor: pointer;
-        transition: all 0.2s;
+    .stats-card {
+        transition: transform 0.2s;
     }
-
-    .product-item:hover {
-        background-color: #f8f9fa;
-    }
-
-    .cart-item {
-        border-bottom: 1px solid #dee2e6;
-        padding: 10px 0;
-    }
+    .stats-card:hover { transform: translateY(-4px); }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="row">
+    <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="mb-0">{% trans "Sotuvlar" %}</h4>
+                <p class="mb-0 text-muted">{% trans "Barcha sotuvlar, filtrlash va nazorat" %}</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'sale_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> {% trans "Yangi sotuv" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="row row-cols-1 row-cols-md-2 g-3 mb-3">
+    <div class="col">
+        <div class="card stats-card border-start border-0 border-4 border-success h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Faol sotuvlar summasi" %}</p>
+                        <h4 class="my-1 text-success">{{ stats.total_active|floatformat:0 }} {% trans "so'm" %}</h4>
+                    </div>
+                    <div class="widgets-icons-2 rounded-circle bg-light-success text-success ms-auto">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card stats-card border-start border-0 border-4 border-info h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-secondary">{% trans "Faol sotuvlar soni" %}</p>
+                        <h4 class="my-1 text-info">{{ stats.count_active }}</h4>
+                    </div>
+                    <div class="widgets-icons-2 rounded-circle bg-light-info text-info ms-auto">
+                        <i class="bi bi-cart-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">{% trans "Boshlanish sanasi" %}</label>
+                        <input type="date" name="from" value="{{ date_from }}" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{% trans "Tugash sanasi" %}</label>
+                        <input type="date" name="to" value="{{ date_to }}" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">{% trans "Status" %}</label>
+                        <select class="form-select" name="status">
+                            <option value="">{% trans "Hammasi" %}</option>
+                            <option value="active" {% if selected_status == 'active' %}selected{% endif %}>{% trans "Faol" %}</option>
+                            <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>{% trans "Bekor qilingan" %}</option>
+                        </select>
+                    </div>
+                    {% if user.role != 'kassir' %}
+                    <div class="col-md-2">
+                        <label class="form-label">{% trans "Kassir" %}</label>
+                        <select class="form-select" name="kassir">
+                            <option value="">{% trans "Hammasi" %}</option>
+                            {% for k in kassirs %}
+                            <option value="{{ k.id }}" {% if selected_kassir|add:'' == k.id|add:'' %}selected{% endif %}>{{ k.fullname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-funnel"></i> {% trans "Filtrlash" %}</button>
+                        <a href="{% url 'sales_list' %}" class="btn btn-light border"><i class="bi bi-x-lg"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sales table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans "Sana" %}</th>
+                                <th>{% trans "Kassir" %}</th>
+                                <th>{% trans "Mahsulotlar" %}</th>
+                                <th>{% trans "Jami" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th class="text-end">{% trans "Amallar" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in sales %}
+                            <tr>
+                                <td>#{{ sale.id }}</td>
+                                <td>{{ sale.sana|date:"d.m.Y H:i" }}</td>
+                                <td>{{ sale.kassir.fullname|default:sale.kassir.username }}</td>
+                                <td>{{ sale.items_count }} {% trans "ta" %}</td>
+                                <td><strong>{{ sale.jami_summa|floatformat:0 }} {% trans "so'm" %}</strong></td>
+                                <td>
+                                    {% if sale.status == 'active' %}
+                                    <span class="badge bg-success">{% trans "Faol" %}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{% trans "Bekor qilingan" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'sale_detail' sale.id %}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+                                        {% if sale.status == 'active' and (user.is_superuser or user.role == 'admin' or sale.kassir == user) %}
+                                        <a href="{% url 'sale_cancel' sale.id %}" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">{% trans "Sotuvlar topilmadi" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

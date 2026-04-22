@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Sotuvni bekor qilish" %} - ShopControlBot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-6 mx-auto">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> {% trans "Sotuvni bekor qilish" %}</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">{% trans "Quyidagi sotuvni bekor qilmoqchimisiz?" %}</p>
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="mb-1">{% trans "Sotuv raqami" %}: #{{ sale.id }}</h6>
+                        <p class="mb-1">{% trans "Kassir" %}: {{ sale.kassir.fullname|default:sale.kassir.username }}</p>
+                        <p class="mb-1">{% trans "Sana" %}: {{ sale.sana|date:"d.m.Y H:i" }}</p>
+                        <p class="mb-0">{% trans "Jami" %}: <strong>{{ sale.jami_summa|floatformat:0 }} {% trans "so'm" %}</strong></p>
+                    </div>
+                </div>
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> {% trans "Ha, bekor qilish" %}</button>
+                        <a href="{% url 'sale_detail' sale.id %}" class="btn btn-secondary">{% trans "Bekor qilish" %}</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
