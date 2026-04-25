@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Sum, Count, Q, F
+from django.db.models import Sum, Count, Q, F, DecimalField, IntegerField
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from datetime import timedelta
@@ -111,19 +111,16 @@ def dashboard(request):
         sales_data.append(float(daily_sales))
     
     # Eng ko'p sotiladigan mahsulotlar
-    lang = get_language()
-    product_name_field = f'product__nomi_{lang}' if lang in ['uz', 'ru', 'en'] else 'product__nomi_uz'
-    
     top_products = SaleItems.objects.filter(
         sale__status='active'
-    ).values(product_name_field).annotate(
+    ).values('product__nomi', 'product_id').annotate(
         total_qty=Sum('miqdor'),
         total_amount=Sum('jami')
     ).order_by('-total_qty')[:5]
     
-    # Rename for template consistency if necessary
+    # Template uchun display_name nomini birlashtirish
     for p in top_products:
-        p['display_name'] = p.get(product_name_field)
+        p['display_name'] = p.get('product__nomi', '-')
     
     # Kategoriyalar bo'yicha taqsimot
     categories = Category.objects.annotate(
@@ -327,7 +324,9 @@ def sales_list(request):
     sales = sales.annotate(items_count=Count('saleitems'))
     kassirs = CustomUser.objects.filter(role='kassir')
     stats = {
-        'total_active': sales.filter(status='active').aggregate(total=Coalesce(Sum('jami_summa'), 0))['total'] or 0,
+        'total_active': sales.filter(status='active').aggregate(
+            total=Coalesce(Sum('jami_summa'), Decimal('0'), output_field=DecimalField())
+        )['total'] or 0,
         'count_active': sales.filter(status='active').count(),
     }
     
@@ -484,9 +483,15 @@ def reports(request):
     monthly_sales = Sales.objects.filter(sana__date__gte=month_ago, status='active')
     monthly_revenue = monthly_sales.aggregate(total=Sum('jami_summa'))['total'] or 0
     
-    # Mahsulot qoldig'i
-    products = Product.objects.all()
-    low_stock_products = [p for p in products if p.is_low_stock()]
+    # Mahsulot qoldig'i - annotated queryset orqali N+1 dan qochamiz
+    products = Product.objects.annotate(
+        total_kirim=Coalesce(Sum('inventorytransaction__miqdor', filter=Q(inventorytransaction__transaction_type='kirim')), 0, output_field=IntegerField()),
+        total_chiqim=Coalesce(Sum('inventorytransaction__miqdor', filter=Q(inventorytransaction__transaction_type='chiqim')), 0, output_field=IntegerField()),
+        total_sales=Coalesce(Sum('saleitems__miqdor', filter=Q(saleitems__sale__status='active')), 0, output_field=IntegerField())
+    ).annotate(
+        current_stock=F('total_kirim') - F('total_chiqim') - F('total_sales')
+    )
+    low_stock_products = [p for p in products if p.current_stock <= p.minimal_qoldiq]
     
     # Kassirlar bo'yicha hisobot (admin va superuser)
     kassir_stats = None
