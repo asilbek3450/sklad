@@ -79,11 +79,9 @@
                                 <td>{{ transaction.product.nomi }}</td>
                                 <td>
                                     {% if transaction.transaction_type == 'kirim' %}
-                                    <span class="badge bg-success"><i class="bi bi-arrow-down-circle"></i> {% trans
-                                        "Kirim" %}</span>
+                                    <span class="badge bg-success"><i class="bi bi-arrow-down-circle"></i> {% trans "Kirim" %}</span>
                                     {% else %}
-                                    <span class="badge bg-danger"><i class="bi bi-arrow-up-circle"></i> {% trans
-                                        "Chiqim" %}</span>
+                                    <span class="badge bg-danger"><i class="bi bi-arrow-up-circle"></i> {% trans "Chiqim" %}</span>
                                     {% endif %}
                                 </td>
                                 <td><strong>{{ transaction.miqdor }} {% trans "dona" %}</strong></td>
